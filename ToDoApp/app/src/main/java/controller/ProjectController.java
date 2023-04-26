@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import model.Project;
 import util.ConnectionFactory;
@@ -14,11 +15,8 @@ public class ProjectController {
 
     public void save(Project project) {
 
-        String sql = "INSERT INTO projects(name, "
-                + "description, "
-                + "createdAt, "
-                + "updatedAt) "
-                + "VALUES (?, ?, ?, ?)";
+   String sql = "INSERT INTO project(name, description, createdAt, updatedAt)"
+           + " VALUES (?, ?, CURRENT_DATE, CURRENT_DATE)";
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -30,14 +28,10 @@ public class ProjectController {
             
             statement.setString(1, project.getName());
             statement.setString(2, project.getDescription());
-            statement.setDate(3, new Date(project.getCreatedAt()
-                    .getTime()));
-            statement.setDate(4, new Date(project.getUpdatedAt()
-                    .getTime()));
-
+            
             statement.execute();
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Erro ao salvar o projeto ", ex);
         } finally {
             ConnectionFactory.closeConnection(connection, statement);
@@ -46,10 +40,9 @@ public class ProjectController {
 
     public void update(Project project) {
 
-        String sql = "UPDATE projects SET "
+        String sql = "UPDATE project SET "
                 + "name = ?, "
                 + "description = ?, "
-                + "createdAt = ?, "
                 + "updatedAt = ? "
                 + "WHERE id = ?";
 
@@ -64,15 +57,12 @@ public class ProjectController {
             
             statement.setString(1, project.getName());
             statement.setString(2, project.getDescription());
-            statement.setDate(3, new Date(project.getCreatedAt()
-                    .getTime()));
-            statement.setDate(4, new Date(project.getUpdatedAt()
-                    .getTime()));
-            statement.setInt(5, project.getId());
+            statement.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
+            statement.setInt(4, project.getId());
             
             statement.execute();
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Erro ao atualizar o projeto ", ex);
         } finally {
             ConnectionFactory.closeConnection(connection, statement);
@@ -81,7 +71,7 @@ public class ProjectController {
         
     public List<Project> getAll() {
 
-        String sql = "SELECT * FROM projects";
+        String sql = "SELECT * FROM project";
 
         //lista de tarefas que sera devolvida quando a chamada de metodo acontecer.
         List<Project> projects = new ArrayList<>();
@@ -121,10 +111,11 @@ public class ProjectController {
         //lista de projetos que foi criada e carregada no banco de dados
         return projects;
     }
+        
 
     public void removeById(int IdProject) {
 
-        String sql = "DELETE FROM projects WHERE id = ?";
+        String sql = "DELETE FROM project WHERE id = ?";
 
         Connection connection = null;
         PreparedStatement statement = null;

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import model.Task;
 import util.ConnectionFactory;
@@ -14,14 +15,14 @@ public class TaskController {
 
     public void save(Task task) {
 
-        String sql = "INSER INTO tasks (idProject, "
+        String sql = "INSERT INTO tasks (idProject, "
                 + "name, "
                 + "description, "
                 + "completed, "
                 + "notes, "
                 + "deadline, "
                 + "createdAt, "
-                + "updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + "updatedAt) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, CURRENT_DATE)";
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -36,10 +37,7 @@ public class TaskController {
             statement.setString(5, task.getNotes());
             statement.setDate(6, new Date(task.getDeadline()
                     .getTime()));
-            statement.setDate(7, new Date(task.getCreatedAt()
-                    .getTime()));
-            statement.setDate(8, new Date(task.getUpdatedAt()
-                    .getTime()));
+            
             statement.execute();
 
         } catch (SQLException ex) {
@@ -58,8 +56,7 @@ public class TaskController {
                 + "description = ?, "
                 + "notes = ?, "
                 + "completed = ?, "
-                + "deadline = ?, "
-                + "createdAt = ?, "
+                + "deadline = ?, "                
                 + "updatedAt = ?, "
                 + "WHERE id = ?";
 
@@ -76,12 +73,9 @@ public class TaskController {
             statement.setString(4, task.getNotes());
             statement.setBoolean(5, task.Completed());
             statement.setDate(6, new Date(task.getDeadline()
-                    .getTime()));
-            statement.setDate(7, new Date(task.getCreatedAt()
-                    .getTime()));
-            statement.setDate(8, new Date(task.getUpdatedAt()
-                    .getTime()));
-            statement.setInt(9, task.getId());
+                    .getTime()));            
+            statement.setDate(7, new Date(Calendar.getInstance().getTimeInMillis()));
+            statement.setInt(8, task.getId());
             statement.execute();
 
         } catch (Exception ex) {

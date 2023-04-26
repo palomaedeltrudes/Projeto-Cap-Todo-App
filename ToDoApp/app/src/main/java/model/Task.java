@@ -27,7 +27,8 @@ public class Task {
     }
     
     public Task(){
-        this.createdAt = new Date();
+      
+        
     }
 
     public int getId() {
